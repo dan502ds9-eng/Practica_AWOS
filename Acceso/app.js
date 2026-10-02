@@ -1,5 +1,5 @@
 //acceso app.js
-import {ObtenerInformacionCompleta} from "..Proceso/orquestador.js";
+import { obtenerInformacionCompleta } from '/Proceso/orquestador.js';
 
 const inputPelicula = document.getElementById("inputPelicula");
 const btnBuscar = document.getElementById("btnBuscar");
@@ -13,11 +13,12 @@ btnBuscar.addEventListener("click", async () => {
 
     //Limpiamos los errores y los resultados previos
 
-    mensajeError.style.display = "none";
-    mensajeErrores.textContent = "";
-    resultadoContenedor.innerHTML = "";
+    mensajeError.style.display = 'none';
+    mensajeError.textContent = '';
 
-    if(titulo){
+    resultadoContenedor.innerHTML = '';
+
+    if(!titulo){
         mensajeError.textContent = "Favor de ingresar un título de película.";
         mensajeError.style.display = "block";
         return;
@@ -27,12 +28,12 @@ btnBuscar.addEventListener("click", async () => {
     
     try { 
         //invocamos al orquestador para obtener la información completa de la película
-        const resultado = await ObtenerInformacionCompleta(titulo);
+        const resultado = await obtenerInformacionCompleta(titulo);
 
         //pintamos el resultado en el contenedor de resultados
         resultadoContenedor.innerHTML = `
             <div>
-            ${restultado.poster ? `<img src="${resultado.poster}" alt="Poster de la película">` : ""}
+            ${resultado.poster ? `<img src="${resultado.poster}" alt="Poster de la película">` : ""}
             <h3>${resultado.titulo} (${resultado.anio})</h3>
             <p><strong>Elenco Principal:</strong> ${resultado.actores}</p>
             <div class="limpiar"></div>

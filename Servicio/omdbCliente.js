@@ -1,5 +1,5 @@
 
-import { crearPeliculaModelo } from '../modelos/peliculaModelo.js';
+import { crearPeliculaModelo } from '../Modelo/peliculaModelo.js';
 const API_KEY = '523e799a';
 
 export async function buscarPelicula(titulo) {
@@ -15,7 +15,7 @@ export async function buscarPelicula(titulo) {
     const datos = await respuesta.json();
 
     if (datos.Response === 'False') {
-    throw new Error("No se encontro esta pelicula con este titulo");   
+    throw new Error("Película no disponible o título incorrecto.");   
     }
 
    const actorPrincipal = datos.Actors ? datos.Actors.split(',')[0].trim() : 'Desconocido';
@@ -29,7 +29,7 @@ export async function buscarPelicula(titulo) {
     });
 
 } catch (error) {
-    throw new Error(`[omdbCliente] ${error.message}`);
+    throw error;
 }
 }
 

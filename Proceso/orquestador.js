@@ -1,28 +1,24 @@
+import { buscarPelicula } from '../Servicio/omdbCliente.js';
+import { buscarBiografiaActor } from '../Servicio/wikipediaCliente.js';
 
-import {buscarPelicula} from '../Servicio/omdbCliente.js';
-import { buscarBiografia }from '../Servicio/wikipediaCliente.js';
+export async function obtenerInformacionCompleta(titulo) {
+    // 1. Obtenemos los datos de la película desde OMDb
+    const pelicula = await buscarPelicula(titulo);
 
+    // 2. Extraemos el primer actor de la lista
+    const listaActores = pelicula.actores || pelicula.Actors || "";
+    const actorPrincipal = listaActores.split(',')[0].trim();
 
-/**
- * Orquesta la llamada a los servicios y encadena sus resultados
- * @param {string} tituloPelicula - Nombre de la película ingresado por el usuario
- */
-    export async function obtenerInformacionCompleta(tituloPelicula) {
+    // 3. Consultamos Wikipedia de forma totalmente segura
+    const bioResultado = await buscarBiografiaActor(actorPrincipal);
 
-    //primer servicio(Pelicula
-    const pelicula = await buscarPelicula(tituloPelicula);
-
-    //segundo servicio(Actor devueltro por el primer servicio)
-    try{
-    if(pelicula.actorPrincipal && pelicula.actorPrincipal !== 'Desconocido'){ 
-    const datosBio = await buscarBiografia(pelicula.actorPrincipal);
-    }else{
-    pelicula.biografiaActor = 'No se encontró información sobre el actor principal.';    
-    }
-    }catch(error){
-    //Manejo de falla parcial: Si Wikipedia falla, la película no se rompe y se entrega el resto del resultado
-    pelicula.biografiaActor = 'Biografia no disponible por el momento.';
-    }
-    return pelicula;
-    }
-    
+    // 4. Retornamos el modelo unificado listo para la interfaz
+    return {
+        titulo: pelicula.titulo || pelicula.Title,
+        anio: pelicula.anio || pelicula.Year,
+        poster: pelicula.poster || pelicula.Poster,
+        actores: listaActores,
+        actorPrincipal: actorPrincipal,
+        biografiaActor: bioResultado.biografia
+    };
+}
